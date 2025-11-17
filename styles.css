@@ -3985,17 +3985,25 @@ section {
         font-size: 3rem;
     }
 
-    .hero-code-demo {
+    .hero-text {
         order: -1;
+    }
+    
+    .hero-code-demo {
+        order: 1;
     }
 
     .about-content {
         grid-template-columns: 1fr;
         gap: 48px;
     }
+    
+    .about-text {
+        order: -1;
+    }
 
     .about-code {
-        order: -1;
+        order: 1;
     }
 
     .project-main {
@@ -4085,6 +4093,23 @@ section {
         max-width: 100%;
         width: 100%;
         box-sizing: border-box;
+    }
+    
+    /* Ensure text appears above code snippet on mobile */
+    .hero-text {
+        order: -1;
+    }
+    
+    .hero-code-demo {
+        order: 1;
+    }
+    
+    .about-text {
+        order: -1;
+    }
+    
+    .about-code {
+        order: 1;
     }
     
     .hamburger {
