@@ -919,7 +919,25 @@ if (projectCards.length > 0 && projectBackdrop) {
 
 // ========== Initialize on page load ==========
 document.addEventListener('DOMContentLoaded', () => {
+    // Prevent scroll restoration and ensure page starts at top
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    
+    // Scroll to top on page load (especially for mobile)
+    window.scrollTo(0, 0);
+    
     // Set initial active nav link
     activateNavLink();
     initCodeTabs();
+});
+
+// Ensure page starts at top on reload
+window.addEventListener('load', () => {
+    // Clear any hash from URL
+    if (window.location.hash) {
+        window.history.replaceState(null, null, ' ');
+    }
+    // Scroll to top
+    window.scrollTo(0, 0);
 });

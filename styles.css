@@ -3976,7 +3976,8 @@ section {
 /* ========== Responsive Design ========== */
 @media (max-width: 968px) {
     .hero-content {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
         text-align: center;
         gap: 48px;
     }
@@ -3986,24 +3987,25 @@ section {
     }
 
     .hero-text {
-        order: -1;
+        order: 1;
     }
     
     .hero-code-demo {
-        order: 1;
+        order: 2;
     }
 
     .about-content {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 48px;
     }
     
     .about-text {
-        order: -1;
+        order: 1;
     }
 
     .about-code {
-        order: 1;
+        order: 2;
     }
 
     .project-main {
@@ -4075,8 +4077,21 @@ section {
         box-sizing: border-box;
     }
     
-    /* Hero and About sections - prevent overflow */
+    /* Hero and About sections - prevent overflow and ensure correct order */
     .hero-content {
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .hero-text {
+        order: 1;
+    }
+    
+    .hero-code-demo {
+        order: 2;
         max-width: 100%;
         width: 100%;
         box-sizing: border-box;
@@ -4086,30 +4101,19 @@ section {
         max-width: 100%;
         width: 100%;
         box-sizing: border-box;
-    }
-    
-    .hero-code-demo,
-    .about-code {
-        max-width: 100%;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    
-    /* Ensure text appears above code snippet on mobile */
-    .hero-text {
-        order: -1;
-    }
-    
-    .hero-code-demo {
-        order: 1;
+        display: flex;
+        flex-direction: column;
     }
     
     .about-text {
-        order: -1;
+        order: 1;
     }
     
     .about-code {
-        order: 1;
+        order: 2;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .hamburger {
