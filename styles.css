@@ -3889,7 +3889,7 @@ section {
     
     .hobbies-container {
         grid-template-columns: 1fr;
-        gap: 16px;
+        gap: 32px;
         max-width: 320px;
         margin: 0 auto;
     }
@@ -4044,6 +4044,49 @@ section {
 }
 
 @media (max-width: 768px) {
+    /* Prevent horizontal overflow */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    section {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    img, video, iframe {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .container {
+        max-width: 100%;
+        padding: 0 16px;
+        box-sizing: border-box;
+    }
+    
+    /* Hero and About sections - prevent overflow */
+    .hero-content {
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .about-content {
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .hero-code-demo,
+    .about-code {
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
     .hamburger {
         display: flex;
     }
@@ -4086,8 +4129,10 @@ section {
     .skills-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-        max-width: 400px;
+        max-width: 100%;
         margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .skill-card {
@@ -4099,6 +4144,8 @@ section {
         align-items: center;
         text-align: center;
         min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
     }
     
     .skill-icon {
@@ -4132,13 +4179,124 @@ section {
         margin-bottom: 48px;
     }
 
+    /* Code snippets - make smaller on mobile */
+    .code-window {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
     .code-content {
-        padding: 12px;
-        font-size: 0.75rem;
+        padding: 10px;
+        font-size: 0.65rem;
+        max-width: 100%;
+        overflow-x: auto;
+        box-sizing: border-box;
     }
 
     .code-content pre {
-        font-size: 0.75rem;
+        font-size: 0.65rem;
+        line-height: 1.4;
+        margin: 0;
+        overflow-x: auto;
+        max-width: 100%;
+    }
+    
+    .code-content code {
+        font-size: 0.65rem;
+        max-width: 100%;
+        white-space: pre;
+        overflow-x: auto;
+        display: block;
+    }
+    
+    .code-header {
+        padding: 8px 12px;
+    }
+    
+    .code-title {
+        font-size: 0.7rem;
+    }
+
+    /* Project cards - make smaller on mobile */
+    .projects-testimonials {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .project-testimonial-card {
+        padding: 16px;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .project-title-top {
+        font-size: 1.1rem;
+    }
+    
+    .testimonial-quote {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+    
+    .project-code-showcase {
+        padding: 12px;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .code-window-small {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .code-content-small {
+        padding: 6px 8px;
+        font-size: 0.6rem;
+        max-width: 100%;
+        overflow-x: auto;
+        box-sizing: border-box;
+    }
+    
+    .code-content-small pre {
+        font-size: 0.6rem;
+        line-height: 1.3;
+        margin: 0;
+        overflow-x: auto;
+        max-width: 100%;
+    }
+    
+    .code-content-small code {
+        font-size: 0.6rem;
+        max-width: 100%;
+        white-space: pre;
+        overflow-x: auto;
+        display: block;
+    }
+    
+    .code-header-small {
+        padding: 4px 8px;
+    }
+    
+    .code-title-small {
+        font-size: 0.6rem;
+    }
+    
+    .project-tech-badges {
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+    
+    .project-tech-badges .tech-badge {
+        font-size: 0.65rem;
+        padding: 3px 8px;
+    }
+    
+    .project-github-link {
+        font-size: 0.7rem;
+        padding: 3px 8px;
     }
 
     .footer-content {
