@@ -822,6 +822,7 @@ section {
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
+    z-index: 1;
 }
 
 .project-testimonial-card:hover {
@@ -845,6 +846,27 @@ section {
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .project-testimonial-card.expanded {
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+    .project-testimonial-card.expanded {
+        width: 95%;
+        max-width: 95%;
+        max-height: 85vh;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 }
 
 .project-testimonial-card.expanded .project-expanded-content {
@@ -1054,6 +1076,11 @@ section {
 .project-testimonial-card:hover .click-for-details {
     opacity: 1;
     color: var(--color-text);
+}
+
+/* Hide "click for more details" when expanded */
+.project-testimonial-card.expanded .click-for-details {
+    display: none;
 }
 
 .project-tech-badges {
@@ -3976,8 +4003,9 @@ section {
 /* ========== Responsive Design ========== */
 @media (max-width: 968px) {
     .hero-content {
-        display: flex;
-        flex-direction: column;
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: none !important;
         text-align: center;
         gap: 48px;
     }
@@ -3987,25 +4015,26 @@ section {
     }
 
     .hero-text {
-        order: 1;
+        order: 1 !important;
     }
     
     .hero-code-demo {
-        order: 2;
+        order: 2 !important;
     }
 
     .about-content {
-        display: flex;
-        flex-direction: column;
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: none !important;
         gap: 48px;
     }
     
     .about-text {
-        order: 1;
+        order: 1 !important;
     }
 
     .about-code {
-        order: 2;
+        order: 2 !important;
     }
 
     .project-main {
@@ -4079,38 +4108,40 @@ section {
     
     /* Hero and About sections - prevent overflow and ensure correct order */
     .hero-content {
-        max-width: 100%;
-        width: 100%;
+        max-width: 100% !important;
+        width: 100% !important;
         box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: none !important;
     }
     
     .hero-text {
-        order: 1;
+        order: 1 !important;
     }
     
     .hero-code-demo {
-        order: 2;
+        order: 2 !important;
         max-width: 100%;
         width: 100%;
         box-sizing: border-box;
     }
     
     .about-content {
-        max-width: 100%;
-        width: 100%;
+        max-width: 100% !important;
+        width: 100% !important;
         box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: none !important;
     }
     
     .about-text {
-        order: 1;
+        order: 1 !important;
     }
     
     .about-code {
-        order: 2;
+        order: 2 !important;
         max-width: 100%;
         width: 100%;
         box-sizing: border-box;

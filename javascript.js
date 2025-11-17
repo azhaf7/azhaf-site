@@ -855,66 +855,69 @@ spinBtn.addEventListener('click', () => {
 });
 
 // ========== Expandable Project Cards ==========
-const projectCards = document.querySelectorAll('.project-testimonial-card');
-const projectBackdrop = document.getElementById('projectBackdrop');
+// Initialize project card expansion
+function initProjectCards() {
+    const projectCards = document.querySelectorAll('.project-testimonial-card');
+    const projectBackdrop = document.getElementById('projectBackdrop');
 
-if (projectCards.length > 0 && projectBackdrop) {
-    projectCards.forEach(card => {
-        card.addEventListener('click', (e) => {
-            // Don't expand if clicking on links or buttons
-            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a') || e.target.closest('button')) {
-                return;
-            }
-            
-            // Toggle expanded state
-            if (card.classList.contains('expanded')) {
-                card.classList.remove('expanded');
-                projectBackdrop.classList.remove('active');
-                document.body.style.overflow = '';
-            } else {
-                // Close any other expanded card
-                projectCards.forEach(c => {
-                    if (c !== card && c.classList.contains('expanded')) {
-                        c.classList.remove('expanded');
-                    }
-                });
-                
-                card.classList.add('expanded');
-                projectBackdrop.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        });
-    });
-
-    // Close on backdrop click
-    projectBackdrop.addEventListener('click', () => {
+    if (projectCards.length > 0 && projectBackdrop) {
         projectCards.forEach(card => {
-            card.classList.remove('expanded');
+            card.addEventListener('click', (e) => {
+                // Don't expand if clicking on links or buttons
+                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a') || e.target.closest('button')) {
+                    return;
+                }
+                
+                // Toggle expanded state
+                if (card.classList.contains('expanded')) {
+                    card.classList.remove('expanded');
+                    projectBackdrop.classList.remove('active');
+                    document.body.style.overflow = '';
+                } else {
+                    // Close any other expanded card
+                    projectCards.forEach(c => {
+                        if (c !== card && c.classList.contains('expanded')) {
+                            c.classList.remove('expanded');
+                        }
+                    });
+                    
+                    card.classList.add('expanded');
+                    projectBackdrop.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
         });
-        projectBackdrop.classList.remove('active');
-        document.body.style.overflow = '';
-    });
 
-    // Close function for close button
-    window.closeProject = function(button) {
-        const card = button.closest('.project-testimonial-card');
-        if (card) {
-            card.classList.remove('expanded');
-            projectBackdrop.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    };
-
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            projectCards.forEach(card => {
+        // Close on backdrop click
+        projectBackdrop.addEventListener('click', () => {
+            document.querySelectorAll('.project-testimonial-card').forEach(card => {
                 card.classList.remove('expanded');
             });
             projectBackdrop.classList.remove('active');
             document.body.style.overflow = '';
-        }
-    });
+        });
+
+        // Close function for close button
+        window.closeProject = function(button) {
+            const card = button.closest('.project-testimonial-card');
+            if (card) {
+                card.classList.remove('expanded');
+                projectBackdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        };
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.project-testimonial-card').forEach(card => {
+                    card.classList.remove('expanded');
+                });
+                projectBackdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
 }
 
 // ========== Initialize on page load ==========
@@ -930,6 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set initial active nav link
     activateNavLink();
     initCodeTabs();
+    initProjectCards();
 });
 
 // Ensure page starts at top on reload
