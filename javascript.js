@@ -21,7 +21,7 @@ function getSystemTheme() {
 
 function getStoredTheme() {
     const stored = localStorage.getItem('theme');
-    return stored || 'dark';
+    return stored || 'system';
 }
 
 function applyTheme(theme) {
@@ -29,7 +29,12 @@ function applyTheme(theme) {
     
     if (theme === 'system') {
         activeTheme = getSystemTheme();
-        htmlElement.removeAttribute('data-theme');
+        // Apply the system theme by setting or removing data-theme attribute
+        if (activeTheme === 'dark') {
+            htmlElement.setAttribute('data-theme', 'dark');
+        } else {
+            htmlElement.removeAttribute('data-theme');
+        }
     } else {
         htmlElement.setAttribute('data-theme', theme);
     }
@@ -131,18 +136,6 @@ const translations = {
             sending: 'Sending...',
             success: 'Message sent successfully!',
             error: 'Failed to send message. Please try again.'
-        },
-        wheel: {
-            spin: 'Spin the Wheel',
-            landing: 'Landing on',
-            sections: {
-                home: 'Home',
-                about: 'About',
-                skills: 'Skills',
-                projects: 'Projects',
-                hobbies: 'Hobbies',
-                contact: 'Contact'
-            }
         },
         hobbies: {
             title: 'Hobbies',
@@ -344,15 +337,6 @@ function translatePage(lang) {
         sendBtn.textContent = t.contact.sendMessage;
     }
 
-    // Wheel sections
-    const wheelSections = document.querySelectorAll('.wheel-section span');
-    if (wheelSections.length >= 5) {
-        wheelSections[0].textContent = t.wheel.sections.home;
-        wheelSections[1].textContent = t.wheel.sections.about;
-        wheelSections[2].textContent = t.wheel.sections.skills;
-        wheelSections[3].textContent = t.wheel.sections.projects;
-        wheelSections[4].textContent = t.wheel.sections.contact;
-    }
 }
 
 // Initialize language when DOM is ready
@@ -761,165 +745,153 @@ function initCodeTabs() {
     });
 }
 
-// ========== Luck Wheel ==========
-const luckWheelBtn = document.getElementById('luckWheelBtn');
-const luckWheelModal = document.getElementById('luckWheelModal');
-const luckWheelClose = document.getElementById('luckWheelClose');
-const luckWheelSpinner = document.getElementById('luckWheelSpinner');
-const spinBtn = document.getElementById('spinBtn');
-const wheelResult = document.getElementById('wheelResult');
-const landedSection = document.getElementById('landedSection');
-
-const wheelSections = ['home', 'about', 'skills', 'projects', 'hobbies', 'contact'];
-let isSpinning = false;
-
-// Open modal
-luckWheelBtn.addEventListener('click', () => {
-    luckWheelModal.classList.add('open');
-    wheelResult.style.display = 'none';
-});
-
-// Close modal
-luckWheelClose.addEventListener('click', () => {
-    luckWheelModal.classList.remove('open');
-});
-
-luckWheelModal.addEventListener('click', (e) => {
-    if (e.target === luckWheelModal) {
-        luckWheelModal.classList.remove('open');
-    }
-});
-
-// Spin the wheel
-spinBtn.addEventListener('click', () => {
-    if (isSpinning) return;
-    
-    isSpinning = true;
-    spinBtn.disabled = true;
-    
-    // Random section
-    const randomSection = wheelSections[Math.floor(Math.random() * wheelSections.length)];
-    
-    // Calculate rotation - spin multiple times + land on random section
-    const spins = 5 + Math.random() * 3; // 5-8 full rotations
-    const sectionIndex = wheelSections.indexOf(randomSection);
-    const sectionAngle = (360 / wheelSections.length) * sectionIndex;
-    const finalRotation = spins * 360 + (360 - sectionAngle) + 22.5; // 22.5 is offset for pointer
-    
-    // Reset rotation first
-    luckWheelSpinner.style.transform = 'rotate(0deg)';
-    
-    // Trigger animation
-    setTimeout(() => {
-        luckWheelSpinner.style.transform = `rotate(${finalRotation}deg)`;
-    }, 10);
-    
-    // After animation, show result and scroll to section
-    setTimeout(() => {
-        // Show result message
-        const currentLang = getStoredLanguage();
-        const t = translations[currentLang];
-        if (t && t.wheel && t.wheel.sections[randomSection]) {
-            landedSection.textContent = t.wheel.sections[randomSection];
-        } else {
-            landedSection.textContent = randomSection.charAt(0).toUpperCase() + randomSection.slice(1);
-        }
-        wheelResult.style.display = 'block';
-        
-        const targetSection = document.getElementById(randomSection);
-        if (targetSection) {
-            const offsetTop = targetSection.offsetTop - 80;
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
-        }
-        
-        // Update active nav link
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${randomSection}`) {
-                link.classList.add('active');
-            }
-        });
-        
-        // Close modal after a delay
-        setTimeout(() => {
-            luckWheelModal.classList.remove('open');
-            isSpinning = false;
-            spinBtn.disabled = false;
-            luckWheelSpinner.style.transform = 'rotate(0deg)';
-            wheelResult.style.display = 'none';
-        }, 2000);
-    }, 4000);
-});
-
 // ========== Expandable Project Cards ==========
 // Initialize project card expansion
 function initProjectCards() {
     const projectCards = document.querySelectorAll('.project-testimonial-card');
     const projectBackdrop = document.getElementById('projectBackdrop');
 
-    if (projectCards.length > 0 && projectBackdrop) {
-        projectCards.forEach(card => {
-            card.addEventListener('click', (e) => {
-                // Don't expand if clicking directly on a link or button
-                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || 
-                    e.target.closest('a.project-github-link') || 
-                    e.target.closest('button.close-expanded')) {
-                    return;
-                }
-                
-                // Toggle expanded state
-                if (card.classList.contains('expanded')) {
-                    card.classList.remove('expanded');
-                    projectBackdrop.classList.remove('active');
-                    document.body.style.overflow = '';
-                } else {
-                    // Close any other expanded card
-                    projectCards.forEach(c => {
-                        if (c !== card && c.classList.contains('expanded')) {
-                            c.classList.remove('expanded');
-                        }
-                    });
-                    
-                    card.classList.add('expanded');
-                    projectBackdrop.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                }
-            });
-        });
+    console.log('initProjectCards: Found', projectCards.length, 'cards');
+    console.log('initProjectCards: Backdrop exists?', !!projectBackdrop);
 
-        // Close on backdrop click
-        projectBackdrop.addEventListener('click', () => {
+    if (projectCards.length === 0) {
+        console.warn('No project cards found!');
+        return;
+    }
+    
+    if (!projectBackdrop) {
+        console.warn('Project backdrop not found!');
+        return;
+    }
+
+    // Remove any existing expanded classes on page load (cleanup)
+    projectCards.forEach(card => {
+        if (card.classList.contains('expanded')) {
+            console.log('Removing stale expanded class from card');
+            card.classList.remove('expanded');
+        }
+    });
+    // Backdrop removed - no longer needed
+    document.body.style.overflow = '';
+
+    // Track if a card is currently being toggled to prevent double-clicks
+    let isToggling = false;
+    
+    projectCards.forEach((card, index) => {
+        // Skip if already has listener (prevent duplicates)
+        if (card.hasAttribute('data-listener-attached')) {
+            console.log(`Skipping card ${index} - listener already attached`);
+            return;
+        }
+        
+        console.log(`Setting up click handler for card ${index}`);
+        card.setAttribute('data-listener-attached', 'true');
+        
+        card.addEventListener('click', function(e) {
+            // Use currentTarget to get the actual card that was clicked
+            const clickedCard = e.currentTarget;
+            
+            // Prevent double-clicks
+            if (isToggling) {
+                console.log('Already toggling, ignoring click');
+                return;
+            }
+            
+            console.log('=== CARD CLICKED ===');
+            console.log('Target:', e.target);
+            console.log('Target tag:', e.target.tagName);
+            console.log('Current card classes BEFORE:', clickedCard.className);
+            
+            // Check if click is on a link or button
+            const clickedLink = e.target.closest('a.project-github-link');
+            const clickedButton = e.target.closest('button.close-expanded');
+            
+            if (clickedLink || clickedButton) {
+                console.log('Skipping - clicked on link/button');
+                return;
+            }
+            
+            console.log('PROCEEDING WITH EXPANSION');
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation(); // Prevent other listeners
+            
+            isToggling = true;
+            
+            // Check current state BEFORE toggling
+            const isCurrentlyExpanded = clickedCard.classList.contains('expanded');
+            console.log('Is currently expanded?', isCurrentlyExpanded);
+            
+            // Toggle expanded state
+            if (isCurrentlyExpanded) {
+                console.log('Collapsing card');
+                clickedCard.classList.remove('expanded');
+                document.body.style.overflow = '';
+            } else {
+                console.log('Expanding card');
+                // Close any other expanded card
+                projectCards.forEach(c => {
+                    if (c !== clickedCard && c.classList.contains('expanded')) {
+                        c.classList.remove('expanded');
+                    }
+                });
+                
+                clickedCard.classList.add('expanded');
+                document.body.style.overflow = 'hidden';
+                console.log('Card expanded! Classes AFTER:', clickedCard.className);
+                
+                // Check if expanded content exists
+                const expandedContent = clickedCard.querySelector('.project-expanded-content');
+                console.log('Expanded content element:', expandedContent);
+                if (expandedContent) {
+                    console.log('Expanded content display:', window.getComputedStyle(expandedContent).display);
+                    console.log('Expanded content visibility:', window.getComputedStyle(expandedContent).visibility);
+                    console.log('Expanded content opacity:', window.getComputedStyle(expandedContent).opacity);
+                    console.log('Expanded content innerHTML length:', expandedContent.innerHTML.length);
+                } else {
+                    console.warn('No .project-expanded-content found in card!');
+                }
+            }
+            
+            // Reset toggle flag after a short delay
+            setTimeout(() => {
+                isToggling = false;
+            }, 300);
+        }, { once: false, capture: false });
+        
+        console.log(`Click handler attached to card ${index}`);
+    });
+
+    // Close when clicking outside the expanded card
+    document.addEventListener('click', (e) => {
+        const expandedCard = document.querySelector('.project-testimonial-card.expanded');
+        if (expandedCard) {
+            // Close if clicking outside the card (not on the card or its children)
+            if (!expandedCard.contains(e.target)) {
+                expandedCard.classList.remove('expanded');
+                document.body.style.overflow = '';
+            }
+        }
+    });
+
+    // Close function for close button
+    window.closeProject = function(button) {
+        const card = button.closest('.project-testimonial-card');
+        if (card) {
+            card.classList.remove('expanded');
+            document.body.style.overflow = '';
+        }
+    };
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
             document.querySelectorAll('.project-testimonial-card').forEach(card => {
                 card.classList.remove('expanded');
             });
-            projectBackdrop.classList.remove('active');
             document.body.style.overflow = '';
-        });
-
-        // Close function for close button
-        window.closeProject = function(button) {
-            const card = button.closest('.project-testimonial-card');
-            if (card) {
-                card.classList.remove('expanded');
-                projectBackdrop.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        };
-
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.project-testimonial-card').forEach(card => {
-                    card.classList.remove('expanded');
-                });
-                projectBackdrop.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
-    }
+        }
+    });
 }
 
 // ========== Initialize on page load ==========
@@ -938,7 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initProjectCards();
 });
 
-// Ensure page starts at top on reload
+// Ensure page starts at top on reload and re-initialize if needed
 window.addEventListener('load', () => {
     // Clear any hash from URL
     if (window.location.hash) {
@@ -946,4 +918,12 @@ window.addEventListener('load', () => {
     }
     // Scroll to top
     window.scrollTo(0, 0);
+    
+    // Re-initialize project cards in case they weren't ready
+    const cards = document.querySelectorAll('.project-testimonial-card');
+    const backdrop = document.getElementById('projectBackdrop');
+    if (cards.length > 0 && backdrop && !backdrop.hasAttribute('data-initialized')) {
+        backdrop.setAttribute('data-initialized', 'true');
+        initProjectCards();
+    }
 });

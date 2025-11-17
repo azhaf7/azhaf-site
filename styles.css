@@ -496,6 +496,7 @@ body {
 section {
     padding: 120px 0;
     position: relative;
+    overflow: visible;
 }
 
 .container {
@@ -647,7 +648,7 @@ section {
 .skill-card {
     background: var(--color-bg);
     padding: 32px;
-    border-radius: 0;
+    border-radius: 12px;
     border: 1px solid var(--color-border);
     transition: all 0.2s ease;
     animation: fadeInUp 0.6s ease both;
@@ -711,6 +712,8 @@ section {
 /* ========== Projects Section ========== */
 .projects {
     background: var(--color-bg);
+    position: relative;
+    overflow: visible;
 }
 
 .project-featured {
@@ -803,6 +806,8 @@ section {
     grid-template-columns: repeat(2, 1fr);
     gap: 48px;
     margin-top: 64px;
+    position: relative;
+    z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -817,8 +822,8 @@ section {
     gap: 16px;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
-    border-radius: 0;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 24px;
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
@@ -836,33 +841,52 @@ section {
 }
 
 .project-testimonial-card.expanded {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10000;
-    max-width: 800px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    pointer-events: auto;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 10000 !important;
+    max-width: 800px !important;
+    width: 90% !important;
+    min-width: 300px !important;
+    max-height: 75vh !important;
+    min-height: 200px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+    pointer-events: auto !important;
+    background: var(--color-bg) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 12px !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    gap: 16px !important;
+    /* Remove any blur effects */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+}
+
+/* Override hover effects when expanded */
+.project-testimonial-card.expanded:hover {
+    transform: translate(-50%, -50%) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 [data-theme="dark"] .project-testimonial-card.expanded {
-    background: rgba(0, 0, 0, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-bg) !important;
+    border: 1px solid var(--color-border) !important;
 }
 
 @media (max-width: 768px) {
     .project-testimonial-card.expanded {
         width: 95%;
         max-width: 95%;
-        max-height: 85vh;
+        max-height: 70vh;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -870,7 +894,25 @@ section {
 }
 
 .project-testimonial-card.expanded .project-expanded-content {
-    display: block;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* Ensure all children are visible when expanded */
+.project-testimonial-card.expanded > * {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.project-testimonial-card.expanded .project-expanded-details,
+.project-testimonial-card.expanded .project-expanded-actions {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .project-expanded-content {
@@ -964,20 +1006,13 @@ section {
 }
 
 .project-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    z-index: 9999;
-    display: none;
-    transition: opacity 0.3s ease;
+    display: none !important;
 }
 
-.project-backdrop.active {
-    display: block;
+/* Disable pointer events on other cards when one is expanded */
+body:has(.project-testimonial-card.expanded) .project-testimonial-card:not(.expanded) {
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 .project-emoji-header {
@@ -4196,7 +4231,8 @@ section {
     }
     
     .skill-card {
-        padding: 16px;
+        padding: 24px;
+        border-radius: 12px;
         aspect-ratio: 1;
         display: flex;
         flex-direction: column;
