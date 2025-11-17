@@ -863,8 +863,10 @@ function initProjectCards() {
     if (projectCards.length > 0 && projectBackdrop) {
         projectCards.forEach(card => {
             card.addEventListener('click', (e) => {
-                // Don't expand if clicking on links or buttons
-                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a') || e.target.closest('button')) {
+                // Don't expand if clicking directly on a link or button
+                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || 
+                    e.target.closest('a.project-github-link') || 
+                    e.target.closest('button.close-expanded')) {
                     return;
                 }
                 
