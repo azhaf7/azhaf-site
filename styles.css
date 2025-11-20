@@ -810,6 +810,15 @@ section {
     z-index: 1;
 }
 
+/* Hide projects beyond the first 4 initially */
+.projects-testimonials .project-testimonial-card:nth-child(n+5) {
+    display: none;
+}
+
+.projects-testimonials.show-all .project-testimonial-card {
+    display: flex !important;
+}
+
 @media (max-width: 768px) {
     .projects-testimonials {
         grid-template-columns: 1fr;
@@ -1003,6 +1012,80 @@ section {
 .close-expanded:hover {
     background: var(--color-text);
     color: var(--color-bg);
+}
+
+/* Project Media Gallery */
+.project-media-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.project-media-image {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--color-bg);
+    transition: all 0.2s ease;
+}
+
+.project-media-image img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.project-media-image figcaption {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    background: var(--color-hover);
+    text-align: center;
+}
+
+.project-media-image:hover {
+    border-color: var(--color-text);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Load More Button */
+.load-more-projects {
+    display: block;
+    margin: 48px auto 0;
+    padding: 12px 32px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.load-more-projects:hover {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+}
+
+.load-more-projects.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .project-media-gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .project-video-placeholder {
+        grid-column: 1;
+    }
 }
 
 .project-backdrop {
@@ -4228,6 +4311,10 @@ body:has(.project-testimonial-card.expanded) .project-testimonial-card:not(.expa
         margin: 0 auto;
         width: 100%;
         box-sizing: border-box;
+    }
+
+    .project-media-gallery {
+        grid-template-columns: 1fr;
     }
     
     .skill-card {

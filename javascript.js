@@ -894,6 +894,26 @@ function initProjectCards() {
     });
 }
 
+// ========== Load More Projects ==========
+function initLoadMoreProjects() {
+    const loadMoreBtn = document.getElementById('loadMoreProjects');
+    const projectsContainer = document.querySelector('.projects-testimonials');
+    const projectCards = document.querySelectorAll('.project-testimonial-card');
+    
+    if (!loadMoreBtn || !projectsContainer) return;
+    
+    // Check if there are more than 4 projects
+    if (projectCards.length <= 4) {
+        loadMoreBtn.classList.add('hidden');
+        return;
+    }
+    
+    loadMoreBtn.addEventListener('click', () => {
+        projectsContainer.classList.add('show-all');
+        loadMoreBtn.classList.add('hidden');
+    });
+}
+
 // ========== Initialize on page load ==========
 document.addEventListener('DOMContentLoaded', () => {
     // Prevent scroll restoration and ensure page starts at top
@@ -908,6 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
     activateNavLink();
     initCodeTabs();
     initProjectCards();
+    initLoadMoreProjects();
 });
 
 // Ensure page starts at top on reload and re-initialize if needed
