@@ -3382,11 +3382,23 @@ html:has(.catalog--dragging) * {
   background: var(--night);
 }
 
+/* Keep the pinned scene on its own layer and paint area, so each scroll
+   frame repaints only the letter mask, not the page around it. */
+.name-portal [data-gp-pin] {
+  will-change: transform;
+  contain: layout paint;
+}
+
+.name-portal [data-gp-field] {
+  contain: strict;
+}
+
 /* The blue seen through the letters, and the colour of everything after. */
 .name-portal__field {
   position: absolute;
   inset: 0;
-  transform: scale(var(--gp-field-scale, 1));
+  /* A flat colour: no scale-up per frame (it changed nothing visible and
+     cost a repaint every frame on phones). */
   background: var(--night);
 }
 

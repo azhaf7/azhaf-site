@@ -85,9 +85,20 @@ export default function Header() {
       frame = 0
       setScrolled(window.scrollY > 8)
       // Written straight to the element: it changes every scroll frame.
+      // Only touch the style when a value really changes: every write makes
+      // the browser recalculate styles, which adds up on phones.
       const state = headerState()
-      headerRef.current?.style.setProperty('--paper', state.ink.toFixed(3))
-      headerRef.current?.style.setProperty('--solid', state.solid.toFixed(3))
+      const node = headerRef.current
+      const ink = state.ink.toFixed(2)
+      const solid = state.solid.toFixed(2)
+      if (node && node.dataset.ink !== ink) {
+        node.dataset.ink = ink
+        node.style.setProperty('--paper', ink)
+      }
+      if (node && node.dataset.solid !== solid) {
+        node.dataset.solid = solid
+        node.style.setProperty('--solid', solid)
+      }
       const line = window.innerHeight * 0.35
       let current = ''
       for (const id of ids) {
