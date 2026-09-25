@@ -2585,6 +2585,11 @@ html:has(.catalog--dragging) * {
     var(--page-paper);
 }
 
+/* Blend modes inside a turning sheet break backface hiding in iOS Safari. */
+.open-book__curl .leaf-page__grain {
+  mix-blend-mode: normal;
+}
+
 /* Shading: each face darkens as it turns away from the reader. The values at
    both edges of a strip are shared with its neighbours, so the tone runs
    smoothly along the whole sheet with no visible bands. */
@@ -4607,7 +4612,8 @@ html:has(.catalog--dragging) * {
   }
 
   .open-book {
-    --cover-h: min(calc(48.5vw / var(--aspect, 0.63)), calc(100svh - 7rem));
+    /* Two pages plus side padding and page-edge stacks must fit the width. */
+    --cover-h: min(calc(45vw / var(--aspect, 0.63)), calc(100svh - 7rem));
   }
 
   .leaf-page {

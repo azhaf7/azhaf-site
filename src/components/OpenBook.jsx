@@ -311,12 +311,21 @@ function CurlStrip({ index, segs, angles, sign, front, back, book, frontNum, bac
         transform: `rotateY(${delta.toFixed(3)}deg)`,
       }}
     >
-      <div className="open-book__curl-face open-book__curl-face--front">
+      {/* Only the face turned towards the reader is shown. Set explicitly
+          rather than trusting backface-visibility, which iOS Safari gets
+          wrong here (the previous page's text showed through mid-turn). */}
+      <div
+        className="open-book__curl-face open-book__curl-face--front"
+        style={{ visibility: current < 90 ? 'visible' : 'hidden' }}
+      >
         <div className="open-book__curl-page">
           <PageView page={front} book={book} number={frontNum} side="right" />
         </div>
       </div>
-      <div className="open-book__curl-face open-book__curl-face--back">
+      <div
+        className="open-book__curl-face open-book__curl-face--back"
+        style={{ visibility: current < 90 ? 'hidden' : 'visible' }}
+      >
         <div className="open-book__curl-page">
           <PageView page={back} book={book} number={backNum} side="left" />
         </div>
