@@ -40,10 +40,19 @@ const CURL_SEGS = 12
 // less drawing and 3D nesting, which mobile Safari struggles with (flicker,
 // stalls, strips dropping out).
 const CURL_SEGS_TOUCH = 3
-const curlSegments = () =>
-  typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
-    ? CURL_SEGS_TOUCH
-    : CURL_SEGS
+// Safari's engine (WebKit; every iPhone browser uses it) mis-draws the
+// nested 3D strips of a curling page: the old page flickers through on
+// forward turns. There the sheet turns as one flat piece instead.
+const isWebKit = () => {
+  const ua = navigator.userAgent
+  return /iPad|iPhone|iPod/.test(ua) || (/Safari\//.test(ua) && !/Chrome|Chromium|Edg|Android/.test(ua))
+}
+
+const curlSegments = () => {
+  if (typeof window === 'undefined') return CURL_SEGS
+  if (isWebKit()) return 1
+  return window.matchMedia('(pointer: coarse)').matches ? CURL_SEGS_TOUCH : CURL_SEGS
+}
 const LEAD_DEG = 30
 const SHADE_MAX = 0.42
 // The page size DEFAULT_BUDGET was tuned on, and the page unit at that size
