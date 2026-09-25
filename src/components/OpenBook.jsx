@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { CoverArt } from './Book'
 import { catalogBookSize } from '../utils/shelfLayout'
 import { books as allBooks } from '../data/books'
@@ -36,6 +36,13 @@ const COVER_ANGLE_OPEN = -180
 const DRAG_CLICK_PX = 10
 const DRAG_COMMIT = 0.28
 const CURL_SEGS = 12
+// Phones get fewer strips per turning sheet: still a smooth bend, at about
+// half the drawing work per frame.
+const CURL_SEGS_TOUCH = 7
+const curlSegments = () =>
+  typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+    ? CURL_SEGS_TOUCH
+    : CURL_SEGS
 const LEAD_DEG = 30
 const SHADE_MAX = 0.42
 // The page size DEFAULT_BUDGET was tuned on, and the page unit at that size
@@ -145,7 +152,7 @@ function PageScene({ book, scene = false }) {
   )
 }
 
-function PageView({ page, book, number, side }) {
+function PageViewBase({ page, book, number, side }) {
   const isProject = book.category === 'Project'
 
   if (page.kind === 'blank') {
@@ -275,16 +282,20 @@ function PageView({ page, book, number, side }) {
   )
 }
 
+// A page's contents only change when the page itself does. Memoised so the
+// dozens of copies drawn for a turning sheet aren't rebuilt every frame.
+const PageView = memo(PageViewBase)
+
 // Strips are chained: each one hangs off the outer edge of the one before it
 // and only adds its own small bend, so the sheet stays continuous. Shading is
 // interpolated across strip boundaries (Gouraud-style) so no seams show.
-function CurlStrip({ index, angles, sign, front, back, book, frontNum, backNum }) {
-  const remain = CURL_SEGS - index
+function CurlStrip({ index, segs, angles, sign, front, back, book, frontNum, backNum }) {
+  const remain = segs - index
   const current = angles[index]
   const parent = index === 0 ? 0 : angles[index - 1]
   const delta = sign * (current - parent)
   const inner = index === 0 ? angles[0] : (angles[index - 1] + angles[index]) / 2
-  const outer = index === CURL_SEGS - 1 ? angles[index] : (angles[index] + angles[index + 1]) / 2
+  const outer = index === segs - 1 ? angles[index] : (angles[index] + angles[index + 1]) / 2
 
   return (
     <div
@@ -309,9 +320,10 @@ function CurlStrip({ index, angles, sign, front, back, book, frontNum, backNum }
           <PageView page={back} book={book} number={backNum} side="left" />
         </div>
       </div>
-      {index < CURL_SEGS - 1 ? (
+      {index < segs - 1 ? (
         <CurlStrip
           index={index + 1}
+          segs={segs}
           angles={angles}
           sign={sign}
           front={front}
@@ -325,21 +337,22 @@ function CurlStrip({ index, angles, sign, front, back, book, frontNum, backNum }
   )
 }
 
-function CurlLeaf({ angle, dir, front, back, book, frontNum, backNum }) {
+function CurlLeaf({ angle, dir, segs, front, back, book, frontNum, backNum }) {
   const progress = Math.min(1, Math.abs(angle) / 180)
   const sign = angle > 0 ? 1 : -1
-  const angles = sheetAngles(progress, dir)
+  const angles = sheetAngles(progress, dir, segs)
 
   return (
     <div
       className="open-book__leaf"
       style={{
         '--flip-progress': progress,
-        '--segs': CURL_SEGS,
+        '--segs': segs,
       }}
     >
       <CurlStrip
         index={0}
+        segs={segs}
         angles={angles}
         sign={sign}
         front={front}
@@ -361,6 +374,9 @@ export default function OpenBook({
   onClosed,
 }) {
   const [budget, setBudget] = useState(DEFAULT_BUDGET)
+  const segs = useMemo(curlSegments, [])
+  const dragFrame = useRef(0)
+  const dragNext = useRef(null)
   const pages = useMemo(() => paginateBook(book, budget), [book, budget])
   const spreadCount = getSpreadCount(pages)
   const [coverAngle, setCoverAngle] = useState(0)
@@ -671,18 +687,32 @@ export default function OpenBook({
     drag.dragging = true
     busyRef.current = true
     const width = stageRef.current?.offsetWidth ? stageRef.current.offsetWidth / 2 : 280
-    if (drag.dir === 'next') {
-      const progress = Math.min(1, Math.max(0, -dx / width))
-      setFlip({ dir: 'next', angle: progress * -180, dragging: true })
-    } else {
-      const progress = Math.min(1, Math.max(0, dx / width))
-      setFlip({ dir: 'prev', angle: -180 + progress * 180, dragging: true })
+    const progress =
+      drag.dir === 'next'
+        ? Math.min(1, Math.max(0, -dx / width))
+        : Math.min(1, Math.max(0, dx / width))
+    dragNext.current =
+      drag.dir === 'next'
+        ? { dir: 'next', angle: progress * -180, dragging: true }
+        : { dir: 'prev', angle: -180 + progress * 180, dragging: true }
+    // Touch screens fire moves faster than the screen refreshes: draw the
+    // sheet at most once per frame, with the latest finger position.
+    if (!dragFrame.current) {
+      dragFrame.current = requestAnimationFrame(() => {
+        dragFrame.current = 0
+        if (dragNext.current) setFlip(dragNext.current)
+      })
     }
   }
 
   const onPointerUp = (event) => {
     const drag = dragRef.current
     dragRef.current = null
+    if (dragFrame.current) {
+      cancelAnimationFrame(dragFrame.current)
+      dragFrame.current = 0
+    }
+    dragNext.current = null
     if (!drag) return
     if (!drag.dragging) {
       if (drag.dir === 'next') turnNext(0)
@@ -830,6 +860,7 @@ export default function OpenBook({
 
                 {flipping && leafFront ? (
                   <CurlLeaf
+                    segs={segs}
                     angle={angle}
                     dir={flip.dir}
                     front={leafFront}
