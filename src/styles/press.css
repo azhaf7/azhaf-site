@@ -2585,6 +2585,22 @@ html:has(.catalog--dragging) * {
     var(--page-paper);
 }
 
+/* Safari orders things in a 3D scene by depth, not z-index. The turning
+   sheet starts and lands exactly level with the flat pages, so the two
+   fought (flicker). Lift the sheet a hair in front and push the revealed
+   page a hair behind so there is never a tie. */
+.open-book__leaf {
+  transform: translateZ(2px);
+}
+
+.open-book__page {
+  transform: translateZ(0);
+}
+
+.open-book__page--under {
+  transform: translateZ(-2px);
+}
+
 /* Blend modes inside a turning sheet break backface hiding in iOS Safari. */
 .open-book__curl .leaf-page__grain {
   mix-blend-mode: normal;
