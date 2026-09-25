@@ -36,9 +36,10 @@ const COVER_ANGLE_OPEN = -180
 const DRAG_CLICK_PX = 10
 const DRAG_COMMIT = 0.28
 const CURL_SEGS = 12
-// Phones get fewer strips per turning sheet: still a smooth bend, at about
-// half the drawing work per frame.
-const CURL_SEGS_TOUCH = 7
+// Phones get far fewer strips per turning sheet: a gentler bend, but much
+// less drawing and 3D nesting, which mobile Safari struggles with (flicker,
+// stalls, strips dropping out).
+const CURL_SEGS_TOUCH = 3
 const curlSegments = () =>
   typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
     ? CURL_SEGS_TOUCH

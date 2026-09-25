@@ -43,6 +43,9 @@ export default function ThemeButton() {
       root.classList.add('theme-fading')
       window.setTimeout(() => root.classList.remove('theme-fading'), FADE_MS)
       root.setAttribute('data-theme', id)
+      // Browser chrome (status / address bar) matches the opening screen.
+      const paper = THEMES.find((entry) => entry.id === id)?.paper
+      if (paper) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', paper)
       try {
         window.localStorage.setItem(STORAGE_KEY, id)
       } catch {

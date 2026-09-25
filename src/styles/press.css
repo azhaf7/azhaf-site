@@ -214,7 +214,9 @@ body {
 
 html {
   color-scheme: dark;
-  background: var(--night);
+  /* Safari tints the status bar and overscroll from this: match the name
+     portal the page opens on (the body keeps the page colour). */
+  background: var(--portal-paper);
   scrollbar-gutter: stable;
 }
 
@@ -3391,6 +3393,21 @@ html:has(.catalog--dragging) * {
 
 .name-portal [data-gp-field] {
   contain: strict;
+}
+
+/* The portal's own touch letter picker: tapping a letter already picks it,
+   so the extra dropdown is just clutter. */
+.name-portal [data-gp-touch-picker] {
+  display: none !important;
+}
+
+/* iOS draws the ↘ arrow as a blue emoji: use a plain ↓ instead. */
+.name-portal [data-gp-enter] > span[aria-hidden='true'] {
+  display: none;
+}
+
+.name-portal [data-gp-enter]::after {
+  content: '\2193';
 }
 
 /* The blue seen through the letters, and the colour of everything after. */

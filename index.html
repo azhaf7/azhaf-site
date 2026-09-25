@@ -9,7 +9,7 @@
       content="Azhaf Khan — third-year software development student in Copenhagen building full-stack web and mobile apps with React, React Native, Node.js, C# and Blazor. Projects, experience, skills and CV."
     />
     <meta name="author" content="Azhaf Khan" />
-    <meta name="theme-color" content="#efe8d6" />
+    <meta name="theme-color" content="#4a5a27" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Azhaf Khan — Software Developer" />
     <meta
@@ -39,6 +39,10 @@
         var theme = localStorage.getItem('azhaf-press-theme')
         var themes = ['olive', 'blush']
         document.documentElement.dataset.theme = themes.indexOf(theme) !== -1 ? theme : 'olive'
+        // Browser chrome (status / address bar) matches the opening screen.
+        var papers = { olive: '#4a5a27', blush: '#6b1f36' }
+        document.querySelector('meta[name="theme-color"]').content =
+          papers[document.documentElement.dataset.theme]
       } catch (e) {}
     </script>
     <div id="root"></div>
